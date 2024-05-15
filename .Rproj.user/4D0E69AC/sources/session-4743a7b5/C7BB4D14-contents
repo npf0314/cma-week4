@@ -158,3 +158,22 @@ segmented_data_filter %>%
 # Save the segmented data to a new CSV file if needed
 write_csv(segmented_data, "C:/_Data/Master/PaT_24/week_4/data/segmented_data.csv")
 
+#____________________________________________________________________________________________________
+
+# Task 3: Visualize segmented trajectories
+
+# Plot the segmented data with colors to distinguish between stops and moves
+segmented_data %>%
+  ggplot(aes(X, Y, colour = static)) +
+  geom_path() +
+  geom_point() +
+  coord_fixed() +
+  labs(title = "Segmented Trajectories", x = "Longitude", y = "Latitude", colour = "Static") +
+  theme_minimal()
+
+# Save the segmented data with static information to a new CSV file if needed
+write_csv(segmented_data, "C:/_Data/Master/PaT_24/week_4/data/segmented_data_with_static.csv")
+
+#____________________________________________________________________________________________________
+
+
