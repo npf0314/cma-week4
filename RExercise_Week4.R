@@ -241,3 +241,46 @@ ggplot(pedestrian_sf, aes(x = st_coordinates(pedestrian_sf)[,1], y = st_coordina
 # Save the pedestrian data with trajectory information to a new CSV file if needed
 write_csv(pedestrian_data, "C:/_Data/Master/PaT_24/week_4/data/pedestrian_data_with_trajectories.csv")
 
+#____________________________________________________________________________________________________
+
+# Task 6: Calculate similarity
+
+# Load the SimilarityMeasures package
+library(SimilarityMeasures)
+library(reshape2)
+
+# Extract trajectories from pedestrian_sf
+trajectories <- split(pedestrian_sf, pedestrian_sf$TrajID)
+
+# Convert trajectories to matrices
+trajectory_matrices <- lapply(trajectories, function(traj) {
+  as.matrix(st_coordinates(traj))
+})
+
+# Compare trajectory 1 to trajectories 2-6 using different similarity measures
+trajectory_1 <- trajectory_matrices[[1]]
+
+similarity_results <- data.frame(
+  TrajID = 2:6,
+  DTW = sapply(2:6, function(i) DTW(trajectory_1, trajectory_matrices[[i]])),
+  EditDist = sapply(2:6, function(i) EditDist(trajectory_1, trajectory_matrices[[i]])),
+  Frechet = sapply(2:6, function(i) Frechet(trajectory_1, trajectory_matrices[[i]])),
+  LCSS = sapply(2:6, function(i) LCSS(trajectory_1, trajectory_matrices[[i]], pointSpacing = 1, pointDistance = 5, errorMarg = 2))
+)
+
+# Print similarity results
+print(similarity_results)
+
+# Visualize the similarity results
+
+similarity_melted <- melt(similarity_results, id.vars = "TrajID")
+
+ggplot(similarity_melted, aes(x = TrajID, y = value, fill = variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Similarity Measures", x = "Trajectory ID", y = "Similarity Value", fill = "Measure") +
+  theme_minimal()
+
+# Save the similarity results to a new CSV file if needed
+write_csv(similarity_results, "C:/_Data/Master/PaT_24/week_4/data/similarity_results.csv")
+
+
