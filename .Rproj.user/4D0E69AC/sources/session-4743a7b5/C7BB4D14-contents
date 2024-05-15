@@ -176,4 +176,44 @@ write_csv(segmented_data, "C:/_Data/Master/PaT_24/week_4/data/segmented_data_wit
 
 #____________________________________________________________________________________________________
 
+# Task 4: Segment-based analysis
 
+# Define the rle_id function
+rle_id <- function(vec) {
+  x <- rle(vec)$lengths
+  as.factor(rep(seq_along(x), times = x))
+}
+
+# Assign unique IDs to subtrajectories
+segmented_data <- segmented_data %>%
+  mutate(segment_id = rle_id(static))
+
+# Visualize the moving segments by colourizing them by segment_id
+segmented_data %>%
+  ggplot(aes(X, Y, colour = segment_id)) +
+  geom_path() +
+  geom_point() +
+  coord_fixed() +
+  labs(title = "Segmented Trajectories by Segment ID", x = "Longitude", y = "Latitude", colour = "Segment ID") +
+  theme_minimal()
+
+# Determine the segments' duration and remove short segments (e.g. segments with a duration < 5 minutes)
+segmented_data <- segmented_data %>%
+  group_by(segment_id) %>%
+  mutate(duration = difftime(max(Time_Point), min(Time_Point), units = "mins")) %>%
+  ungroup() %>%
+  filter(duration >= 5)
+
+# Visualize the filtered segments
+segmented_data %>%
+  ggplot(aes(X, Y, colour = segment_id)) +
+  geom_path() +
+  geom_point() +
+  coord_fixed() +
+  labs(title = "Filtered Segmented Trajectories by Segment ID", x = "Longitude", y = "Latitude", colour = "Segment ID") +
+  theme_minimal()
+
+# Save the final segmented data to a new CSV file if needed
+write_csv(segmented_data, "C:/_Data/Master/PaT_24/week_4/data/final_segmented_data.csv")
+
+#____________________________________________________________________________________________________
