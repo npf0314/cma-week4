@@ -217,3 +217,27 @@ segmented_data %>%
 write_csv(segmented_data, "C:/_Data/Master/PaT_24/week_4/data/final_segmented_data.csv")
 
 #____________________________________________________________________________________________________
+
+# Task 5: Similarity measures
+
+# Load the new dataset pedestrian.csv
+file_path_pedestrian <- "C:/_Data/Master/PaT_24/week_4//data/pedestrian.csv"
+pedestrian_data <- read_csv(file_path_pedestrian)
+
+# Check the structure of the data
+str(pedestrian_data)
+
+# Convert to sf object with the correct CRS (assuming EPSG 2056)
+pedestrian_sf <- st_as_sf(pedestrian_data, coords = c("E", "N"), crs = 2056, remove = FALSE)
+
+# Explore the trajectories
+ggplot(pedestrian_sf, aes(x = st_coordinates(pedestrian_sf)[,1], y = st_coordinates(pedestrian_sf)[,2], colour = as.factor(TrajID))) +
+  geom_path() +
+  geom_point() +
+  coord_fixed() +
+  labs(title = "Pedestrian Trajectories", x = "Longitude", y = "Latitude", colour = "Trajectory ID") +
+  theme_minimal()
+
+# Save the pedestrian data with trajectory information to a new CSV file if needed
+write_csv(pedestrian_data, "C:/_Data/Master/PaT_24/week_4/data/pedestrian_data_with_trajectories.csv")
+
