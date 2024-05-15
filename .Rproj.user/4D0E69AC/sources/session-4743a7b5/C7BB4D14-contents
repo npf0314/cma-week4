@@ -126,3 +126,35 @@ segmented_data_filter %>%
 
 # Save the segmented data to a new CSV file if needed
 write_csv(segmented_data, "C:/_Data/Master/PaT_24/week_4/data/segmented_data.csv")
+
+#____________________________________________________________________________________________________
+
+# Task 2: Specify and apply threshold d
+
+# Explore stepMean values using summary statistics
+summary(segmented_data$stepMean)
+hist(segmented_data$stepMean, main = "Histogram of stepMean", xlab = "stepMean")
+boxplot(segmented_data$stepMean, main = "Boxplot of stepMean")
+
+# Define threshold value as the mean of stepMean values
+threshold_d <- mean(segmented_data$stepMean, na.rm = TRUE)
+
+# Store the new information (boolean to differentiate between stops (TRUE) and moves (FALSE)) in a new column named static
+segmented_data <- segmented_data %>%
+  mutate(static = stepMean < threshold_d)
+
+# Filter out static points
+segmented_data_filter <- segmented_data %>%
+  filter(!static)
+
+# Plot the segmented data
+segmented_data_filter %>%
+  ggplot(aes(X, Y)) + # Use X and Y columns from st_coordinates
+  geom_path() +
+  geom_point() +
+  coord_fixed() +
+  theme(legend.position = "bottom")
+
+# Save the segmented data to a new CSV file if needed
+write_csv(segmented_data, "C:/_Data/Master/PaT_24/week_4/data/segmented_data.csv")
+
